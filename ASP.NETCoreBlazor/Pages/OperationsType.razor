@@ -1,0 +1,54 @@
+﻿@page "/"
+@page "/OperationsType"
+@inherits ModelAttributeGetHelper
+@inject IRepository<Models.OperationType> OperationTypeRepository
+@inject NavigationManager NavigationManager
+
+<PageTitle>Список финансовых операций</PageTitle>
+<h3>Список финансовых операций</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@GetDisplayName(new Models.OperationType(), nameof(Models.OperationType.Name))</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var operation in operationsType)
+        {
+            <tr>
+                <td>@operation.Name</td>
+                <td>
+                    <button class="btn btn-primary" style="display:block; margin-left:auto" @onclick="(() => DetailsOperationType(operation.Id))">
+                        <i class="oi oi-pencil"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateNewOperationType">Добавить новый тип операции</button>
+
+@code {
+    private List<Models.OperationType> operationsType = new List<Models.OperationType>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await OperationTypeRepository.GetAllAsync();
+        if (result is not null)
+        {
+            operationsType = (List<Models.OperationType>)result;
+        }
+    }
+
+    private void DetailsOperationType(int id)
+    {
+        NavigationManager.NavigateTo($"OperationType/{id}");
+    }
+
+    private void CreateNewOperationType()
+    {
+        NavigationManager.NavigateTo("/OperationType");
+    }
+}

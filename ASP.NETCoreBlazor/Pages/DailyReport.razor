@@ -1,0 +1,79 @@
+﻿@page "/DailyReport"
+@inherits ModelAttributeGetHelper
+@inject IReportService ReportService
+
+<PageTitle>Дневной отчет</PageTitle>
+<h3>Дневной отчет</h3>
+
+<EditForm Model="dailyReport" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator />
+    <div>
+        <label for="Date" class="form-label">@GetDisplayName(dailyReport, nameof(dailyReport.Date))</label>
+        <InputDate id="Date" @bind-Value="dailyReport.Date" class="form-control" ParsingErrorMessage="@GetRequiredErrorMessage(dailyReport, nameof(dailyReport.Date))" />
+        <ValidationMessage For="@(() => dailyReport.Date)" class="validation-message oi oi-x" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Показать отчет</button>
+</EditForm>
+
+@if (dailyReport.Transactions.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Description))</th>
+                <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Amount))</th>
+                <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Date))</th>
+                <th>@GetDisplayName(new Models.OperationType(), nameof(Models.OperationType.Name))</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in dailyReport.Transactions)
+            {
+                <tr>
+                    <td>@transaction.Description</td>
+                    <td>@transaction.Amount</td>
+                    <td>@transaction.Date.ToShortDateString()</td>
+                    <td>@transaction.Type?.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@GetDisplayName(new Models.DailyReport(), nameof(Models.DailyReport.TotalIncome))</th>
+                <th>@GetDisplayName(new Models.DailyReport(), nameof(Models.DailyReport.TotalExpenses))</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@dailyReport.TotalIncome</td>
+                <td>@dailyReport.TotalExpenses</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="p-xxl-5">@message</p>
+}
+
+@code {
+    private Models.DailyReport dailyReport = new Models.DailyReport { Date = DateTime.Today };
+    private string message = string.Empty;
+
+    private async Task ValidSubmit()
+    {
+        dailyReport = await ReportService.GetDailyReportAsync(dailyReport.Date);
+        if (dailyReport.Transactions.Count < 1)
+        {
+            message = "Нет данных на указанную дату.";
+        }
+        else
+
+        {
+            message = string.Empty;
+        }
+    }
+}

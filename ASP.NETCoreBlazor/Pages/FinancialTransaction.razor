@@ -1,0 +1,55 @@
+﻿@page "/FinancialTransaction"
+@page "/FinancialTransaction/{id:int}"
+@inherits ModelAttributeGetHelper
+@inject IRepository<Models.FinancialTransaction> FinancialTransactionRepository
+@inject IRepository<Models.OperationType> OperationTypeRepository
+@inject NavigationManager NavigationManager
+
+@if (id is null)
+{
+    <PageTitle>Добавление новой финансовой транзакции</PageTitle>
+    <h3>Добавление новой финансовой транзакции</h3>
+}
+else
+{
+    <PageTitle>Редактирование @financialTransaction.Description</PageTitle>
+    <h3>Редактирование @financialTransaction.Description</h3>
+}
+
+<EditForm Model="financialTransaction" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator />
+    <div>
+        <label for="Description" class="form-label">@GetDisplayName(financialTransaction, nameof(financialTransaction.Description))</label>
+        <InputText id="Description" @bind-Value="financialTransaction.Description" class="form-control" />
+        <ValidationMessage For="@(() => financialTransaction.Description)" class="validation-message oi oi-x" />
+    </div>
+    <br />
+    <div>
+        <label for="Amount" class="form-label">@GetDisplayName(financialTransaction, nameof(financialTransaction.Amount))</label>
+        <InputNumber id="Amount" @bind-Value="financialTransaction.Amount" class="form-control" ParsingErrorMessage="@GetRequiredErrorMessage(financialTransaction, nameof(financialTransaction.Amount))" />
+        <ValidationMessage For="@(() => financialTransaction.Amount)" class="validation-message oi oi-x" />
+    </div>
+    <br />
+    <div>
+        <label for="Date" class="form-label">@GetDisplayName(financialTransaction, nameof(financialTransaction.Date))</label>
+        <InputDate id="Date" @bind-Value="financialTransaction.Date" class="form-control" ParsingErrorMessage="@GetRequiredErrorMessage(financialTransaction, nameof(financialTransaction.Date))" />
+        <ValidationMessage For="@(() => financialTransaction.Date)" class="validation-message oi oi-x" />
+    </div>
+    <br />
+    <div>
+        <label for="Type" class="form-label">@GetDisplayName(new Models.OperationType(), nameof(Models.OperationType.Name))</label>
+        <InputSelect id="Type" @bind-Value="financialTransaction.TypeId" class="form-control">
+            @foreach (var operation in operationsType)
+            {
+                <option value="@operation.Id">@operation.Name</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="@(() => financialTransaction.TypeId)" class="validation-message oi oi-x" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    @if (id is not null)
+    {
+        <button type="button" class="btn btn-danger" style="margin-left:10px" @onclick="DeleteFinancialTransaction">Удалить финансовую транзакцию</button>
+    }
+</EditForm>

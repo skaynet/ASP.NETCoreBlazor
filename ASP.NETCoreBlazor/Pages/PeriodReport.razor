@@ -1,0 +1,85 @@
+﻿@page "/PeriodReport"
+@inherits ModelAttributeGetHelper
+@inject IReportService ReportService
+
+<PageTitle>Отчет за период дат</PageTitle>
+<h3>Отчет за период дат</h3>
+
+<EditForm Model="periodReport" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator />
+    <div>
+        <label for="StartDate" class="form-label">@GetDisplayName(periodReport, nameof(periodReport.StartDate))</label>
+        <InputDate id="StartDate" @bind-Value="periodReport.StartDate" class="form-control" ParsingErrorMessage="@GetRequiredErrorMessage(periodReport, nameof(periodReport.StartDate))" />
+        <ValidationMessage For="@(() => periodReport.StartDate)" class="validation-message oi oi-x" />
+    </div>
+    <br />
+    <div>
+        <label for="EndDate" class="form-label">@GetDisplayName(periodReport, nameof(periodReport.EndDate))</label>
+        <InputDate id="EndDate" @bind-Value="periodReport.EndDate" class="form-control" ParsingErrorMessage="@GetRequiredErrorMessage(periodReport, nameof(periodReport.EndDate))" />
+        <ValidationMessage For="@(() => periodReport.EndDate)" class="validation-message oi oi-x" />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Показать отчет</button>
+</EditForm>
+
+@if (periodReport.Transactions.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Description))</th>
+                <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Amount))</th>
+                <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Date))</th>
+                <th>@GetDisplayName(new Models.OperationType(), nameof(Models.OperationType.Name))</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in periodReport.Transactions)
+            {
+                <tr>
+                    <td>@transaction.Description</td>
+                    <td>@transaction.Amount</td>
+                    <td>@transaction.Date.ToShortDateString()</td>
+                    <td>@transaction.Type?.Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@GetDisplayName(new Models.PeriodReport(), nameof(Models.PeriodReport.TotalIncome))</th>
+                <th>@GetDisplayName(new Models.PeriodReport(), nameof(Models.PeriodReport.TotalExpenses))</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@periodReport.TotalIncome</td>
+                <td>@periodReport.TotalExpenses</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="p-5">@message</p>
+}
+
+@code {
+    private Models.PeriodReport periodReport = new Models.PeriodReport { StartDate = DateTime.Today.AddDays(-30), EndDate = DateTime.Today };
+    private string message = string.Empty;
+
+    private async Task ValidSubmit()
+    {
+        periodReport = await ReportService.GetPeriodReportAsync(periodReport.StartDate, periodReport.EndDate);
+        if (periodReport.Transactions.Count < 1)
+        {
+            message = "Нет данных за данный период.";
+        }
+        else
+
+        {
+            message = string.Empty;
+        }
+    }
+}

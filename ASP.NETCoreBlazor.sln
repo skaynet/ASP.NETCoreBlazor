@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASP.NETCoreBlazor", "ASP.NETCoreBlazor\ASP.NETCoreBlazor.csproj", "{2C3A95D2-A7DB-4163-8B93-3986508C72BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASP.NETCoreBlazorTests", "ASP.NETCoreBlazorTests\ASP.NETCoreBlazorTests.csproj", "{6C576091-CBCD-40E6-9A4F-CD68114A7D8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C3A95D2-A7DB-4163-8B93-3986508C72BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C3A95D2-A7DB-4163-8B93-3986508C72BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C3A95D2-A7DB-4163-8B93-3986508C72BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C3A95D2-A7DB-4163-8B93-3986508C72BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C576091-CBCD-40E6-9A4F-CD68114A7D8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C576091-CBCD-40E6-9A4F-CD68114A7D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C576091-CBCD-40E6-9A4F-CD68114A7D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C576091-CBCD-40E6-9A4F-CD68114A7D8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {25B06916-CDF0-4117-B7BF-6DD3951CA640}
+	EndGlobalSection
+EndGlobal

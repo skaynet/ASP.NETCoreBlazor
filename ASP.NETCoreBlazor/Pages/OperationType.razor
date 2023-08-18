@@ -1,0 +1,80 @@
+﻿@page "/OperationType"
+@page "/OperationType/{id:int}"
+@inherits ModelAttributeGetHelper
+@inject IRepository<Models.OperationType> OperationTypeRepository
+@inject NavigationManager NavigationManager
+
+@if (id is null)
+{
+    <PageTitle>Добавление нового типа операции</PageTitle>
+    <h3>Добавление нового типа операции</h3>
+}
+else
+{
+    <PageTitle>Редактирование @operationType.Name</PageTitle>
+    <h3>Редактирование @operationType.Name</h3>
+}
+
+<EditForm Model="operationType" OnValidSubmit="ValidSubmit">
+    <DataAnnotationsValidator />
+    <div>
+        <label for="Name" class="form-label">@GetDisplayName(operationType, nameof(operationType.Name))</label>
+        <InputText id="Name" @bind-Value="operationType.Name" class="form-control" />
+        <ValidationMessage class="validation-message oi oi-x" For="@(() => operationType.Name)" />
+    </div>
+    <br/>
+    <button type="submit" class="btn btn-primary">@btnText</button>
+    @if (id is not null)
+    {
+        <button type="button" class="btn btn-danger" style="margin-left:10px" @onclick="DeleteOperationType">Удалить тип операции</button>
+    }
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? id { get; set; }
+    private string btnText = string.Empty;
+
+    private Models.OperationType operationType = new Models.OperationType { Name = "New Operation Type" };
+
+    protected override void OnInitialized()
+    {
+        btnText = id == null ? "Добавить новый тип операции" : "Изменить имя операции";
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (id is not null)
+        {
+            var result = await OperationTypeRepository.GetByIdAsync((int)id);
+            if (result is not null)
+            {
+                operationType = result;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/OperationType");
+            }
+        }
+    }
+
+    private async Task ValidSubmit()
+    {
+        if (id is null)
+        {
+            await OperationTypeRepository.CreateAsync(operationType);
+            NavigationManager.NavigateTo("/OperationsType");
+        }
+        else
+        {
+            await OperationTypeRepository.UpdateAsync(operationType);
+            NavigationManager.NavigateTo("/OperationsType");
+        }
+    }
+
+    private async Task DeleteOperationType()
+    {
+        await OperationTypeRepository.DeleteAsync(operationType);
+        NavigationManager.NavigateTo("/OperationsType");
+    }
+}

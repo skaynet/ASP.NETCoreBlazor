@@ -1,0 +1,59 @@
+﻿@page "/FinancialTransactions"
+@inherits ModelAttributeGetHelper
+@inject IRepository<Models.FinancialTransaction> FinancialTransactionRepository
+@inject NavigationManager NavigationManager
+
+<PageTitle>Список финансовых транзакций</PageTitle>
+<h3>Список финансовых транзакций</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Description))</th>
+            <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Amount))</th>
+            <th>@GetDisplayName(new Models.FinancialTransaction(), nameof(Models.FinancialTransaction.Date))</th>
+            <th>@GetDisplayName(new Models.OperationType(), nameof(Models.OperationType.Name))</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in financialTransactions)
+        {
+            <tr>
+                <td>@transaction.Description</td>
+                <td>@transaction.Amount</td>
+                <td>@transaction.Date.ToShortDateString()</td>
+                <td>@transaction.Type?.Name</td>
+                <td>
+                <button class="btn btn-primary" style="display:block; margin-left:auto" @onclick="(() => DetailsFinancialTransaction(transaction.Id))">
+                        <i class="oi oi-pencil"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<button class="btn btn-primary" @onclick="CreateNewFinancialTransaction">Добавить новую финансовую транзакцию</button>
+
+@code {
+    private List<Models.FinancialTransaction> financialTransactions = new List<Models.FinancialTransaction>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await FinancialTransactionRepository.GetAllAsync();
+        if (result is not null)
+        {
+            financialTransactions = (List<Models.FinancialTransaction>)result.OrderByDescending(t => t.Date).ToList();
+        }
+    }
+
+    private void CreateNewFinancialTransaction()
+    {
+        NavigationManager.NavigateTo("/FinancialTransaction");
+    }
+
+    private void DetailsFinancialTransaction(int id)
+    {
+        NavigationManager.NavigateTo($"FinancialTransaction/{id}");
+    }
+}
